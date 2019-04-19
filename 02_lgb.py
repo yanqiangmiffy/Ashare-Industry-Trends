@@ -11,6 +11,7 @@ import lightgbm as lgb
 import pandas as pd
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 train=pd.read_csv('input/train.csv')
 test=pd.read_csv('input/test.csv')
@@ -59,14 +60,14 @@ for k, (train_in, test_in) in enumerate(skf.split(X, y)):
         # 'max_depth': 4,
         'min_child_weight': 6,
         'num_leaves': 203,
-        'learning_rate': 0.02,  # 0.05
+        'learning_rate': 0.1,  # 0.05
         'feature_fraction': 0.7,
         'bagging_fraction': 0.7,
         'bagging_freq': 5,
         # 'lambda_l1':0.25,
         # 'lambda_l2':0.5,
         # 'scale_pos_weight':10.0/1.0, #14309.0 / 691.0, #不设置
-        'num_threads':8,
+        'num_threads':4,
     }
 
     print('................Start training {} fold..........................'.format(k+1))
@@ -76,8 +77,9 @@ for k, (train_in, test_in) in enumerate(skf.split(X, y)):
                     num_boost_round=2000,
                     valid_sets=lgb_eval,
                     early_stopping_rounds=100,
-                    verbose_eval=100)
-
+                    verbose_eval=100,feature_name=features)
+    lgb.plot_importance(gbm,max_num_features=20)
+    plt.show()
     print('................Start predict .........................')
     # 预测
     y_pred = gbm.predict(X_test, num_iteration=gbm.best_iteration)

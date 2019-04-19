@@ -20,9 +20,9 @@ train_stock['ts_code']=train_stock['ts_code'].astype('int32')
 train_stock['trade_date']=train_stock['trade_date'].astype('int32')
 train_stock['y']=train_stock['y'].astype('int32')
 
-no_features = ['ts_code', 'trade_date']
+no_features = ['ts_code', 'trade_date','name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
-period = 40
+period = 50
 featurenum = len(features) * period
 future_date = [20190402, 20190403, 20190404, 20190408, 20190409]
 all_train,all_test=pd.DataFrame(),pd.DataFrame()
@@ -40,7 +40,7 @@ for index,group in tqdm(train_stock.groupby(by='ts_code')):
 
     df = pd.concat(cols, axis=1)
     df.columns = names
-    df = pd.concat([group[['ts_code', 'trade_date', 'y']], df], axis=1)
+    df = pd.concat([group[['ts_code', 'trade_date', 'y','name']], df], axis=1)
 
     train, test = df.iloc[:df.shape[0] - 5], df.iloc[-5:]
     train=train.dropna(subset=['pb(day-1)','pe(day-1)'],how="all")
