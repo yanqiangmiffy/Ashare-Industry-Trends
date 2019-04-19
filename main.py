@@ -13,3 +13,5 @@ print(train_stock.info())
 print(train_stock.name.value_counts(),len(train_stock.name.value_counts()))
 
 dates=[20190402,20190402,20190403,20190404,20190405]
+
+print(train_stock.shift(7))
