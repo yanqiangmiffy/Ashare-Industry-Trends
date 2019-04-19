@@ -16,3 +16,11 @@ print(train_stock.ts_code.value_counts(),len(train_stock.ts_code.unique()))
 # dates=[20190402,20190402,20190403,20190404,20190405]
 #
 # print(train_stock.shift(7))
+
+no_features=['ts_code','trade_date','y']
+features=[fea for fea in train_stock.columns if fea not in no_features]
+print(features)
+# 生成训练集
+
+
+# 生成测试集
