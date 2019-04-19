@@ -11,7 +11,7 @@ import lightgbm as lgb
 import pandas as pd
 import numpy as np
 import time
-
+from sklearn.preprocessing import LabelEncoder
 train=pd.read_csv('input/train.csv')
 test=pd.read_csv('input/test.csv')
 
@@ -59,7 +59,7 @@ for k, (train_in, test_in) in enumerate(skf.split(X, y)):
         # 'max_depth': 4,
         'min_child_weight': 6,
         'num_leaves': 203,
-        'learning_rate': 0.05,  # 0.05
+        'learning_rate': 0.02,  # 0.05
         'feature_fraction': 0.7,
         'bagging_fraction': 0.7,
         'bagging_freq': 5,

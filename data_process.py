@@ -19,7 +19,7 @@ train_stock['trade_date']=train_stock['trade_date'].astype('int32')
 train_stock['y']=train_stock['y'].astype('int32')
 
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
-period = 15
+period = 20
 featurenum = len(features) * period
 future_date = [20190402, 20190403, 20190404, 20190408, 20190409]
 all_train,all_test=pd.DataFrame(),pd.DataFrame()
