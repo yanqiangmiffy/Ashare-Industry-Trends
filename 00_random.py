@@ -21,5 +21,5 @@ pred=[]
 for i in range(len(df)):
     pred.append(random.uniform(0,1))
 df['p']=pred
-df['p']=df['p'].round(3)
+# df['p']=df['p'].round(3)
 df.to_csv('rn.csv',index=False)
