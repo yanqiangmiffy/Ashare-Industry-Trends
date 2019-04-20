@@ -20,6 +20,12 @@ train_stock['ts_code']=train_stock['ts_code'].astype('int32')
 train_stock['trade_date']=train_stock['trade_date'].astype('int32')
 train_stock['y']=train_stock['y'].astype('int32')
 
+# 特征工程
+# 1.威廉指数：（最高价-收盘价）/(最高价-最低价)*100
+train_stock['willr']=(train_stock['high']-train_stock['close'])/(train_stock['high']-train_stock['low'])*100
+# 2.tmp
+# train_stock['tmp']=(train_stock['high']+train_stock['close']+train_stock['low'])/3
+# RSI
 no_features = ['ts_code', 'trade_date','name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
 period = 50
