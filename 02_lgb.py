@@ -67,7 +67,7 @@ for k, (train_in, test_in) in enumerate(skf.split(X, y)):
         # 'lambda_l1':0.25,
         # 'lambda_l2':0.5,
         # 'scale_pos_weight':10.0/1.0, #14309.0 / 691.0, #不设置
-        'num_threads':4,
+        'num_threads':8,
     }
 
     print('................Start training {} fold..........................'.format(k+1))
