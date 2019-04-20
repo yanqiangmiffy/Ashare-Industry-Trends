@@ -24,8 +24,10 @@ train_stock['y']=train_stock['y'].astype('int32')
 # 1.威廉指数：（最高价-收盘价）/(最高价-最低价)*100
 train_stock['willr']=(train_stock['high']-train_stock['close'])/(train_stock['high']-train_stock['low'])*100
 # 2.tmp
-# train_stock['tmp']=(train_stock['high']+train_stock['close']+train_stock['low'])/3
+train_stock['tmp']=(train_stock['high']+train_stock['close']+train_stock['low'])/3
 # RSI
+
+
 no_features = ['ts_code', 'trade_date','name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
 period = 50
@@ -47,7 +49,30 @@ for index,group in tqdm(train_stock.groupby(by='ts_code')):
     df = pd.concat(cols, axis=1)
     df.columns = names
     df = pd.concat([group[['ts_code', 'trade_date', 'y','name']], df], axis=1)
+    change_cols=[col for col in df.columns if col.startswith('change')]
+    df[change_cols]=df[change_cols].fillna(value=0)
+    df['avg_change']=df[change_cols].mean(axis=1) # 每行平均值
+    df['sum_change']=df[change_cols].sum(axis=1) # 每行和
+    df['max_change']=df[change_cols].max(axis=1) # 每行最大值
+    df['min_change']=df[change_cols].min(axis=1) # 每行最小值
+    df['median_change']=df[change_cols].median(axis=1) # 算术中位数
 
+    pct_cols = [col for col in df.columns if col.startswith('pct')]
+    df[pct_cols] = df[pct_cols].fillna(value=0)
+    df['avg_pct'] = df[pct_cols].mean(axis=1)  # 每行平均值
+    df['sum_pct'] = df[pct_cols].sum(axis=1)  # 每行和
+    df['max_pct'] = df[pct_cols].max(axis=1)  # 每行最大值
+    df['min_pct'] = df[pct_cols].min(axis=1)  # 每行最小值
+    df['median_pct'] = df[pct_cols].median(axis=1)  # 算术中位数
+
+    # y(day
+    y_cols = [col for col in df.columns if col.startswith('y(day')]
+    df[y_cols] = df[y_cols].fillna(value=0.5)
+    df['avg_y'] = df[y_cols].mean(axis=1)  # 每行平均值
+    df['sum_y'] = df[y_cols].sum(axis=1)  # 每行和
+    df['median_y'] = df[y_cols].median(axis=1)  # 算术中位数
+
+    # print(change_cols)
     train, test = df.iloc[:df.shape[0] - 5], df.iloc[-5:]
     train=train.dropna(subset=['pb(day-1)','pe(day-1)'],how="all")
     all_train=all_train.append(train)
