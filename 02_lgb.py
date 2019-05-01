@@ -33,14 +33,14 @@ print("test shape",test_data.shape)
 
 # 9.开始训练
 # 采取分层采样
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold,KFold
 from sklearn.metrics import roc_auc_score
 
 print("start：********************************")
 start = time.time()
 
 N = 5
-skf = StratifiedKFold(n_splits=N,shuffle=True,random_state=2018)
+skf = KFold(n_splits=N,shuffle=True,random_state=2018)
 
 auc_cv = []
 pred_cv = []
@@ -58,16 +58,18 @@ for k, (train_in, test_in) in enumerate(skf.split(X, y)):
         'objective': 'binary',
         'metric': {'auc'},
         # 'max_depth': 4,
-        'min_child_weight': 6,
-        'num_leaves': 96,
+        # 'min_child_weight': 6,
+        'num_leaves': 128,
         'learning_rate': 0.1,  # 0.05
         'feature_fraction': 0.7,
         'bagging_fraction': 0.7,
-        'bagging_freq': 5,
-        # 'lambda_l1':0.25,
-        # 'lambda_l2':0.5,
-        # 'scale_pos_weight':10.0/1.0, #14309.0 / 691.0, #不设置
+        'reg_alpha':0.3,
+        'reg_lambda':0.3,
+        'min_data_in_leaf' :18,
+        'min_sum_hessian_in_leaf' :0.001,
+        'n_jobs' :-1,
         'num_threads':8,
+
     }
 
     print('................Start training {} fold..........................'.format(k+1))
