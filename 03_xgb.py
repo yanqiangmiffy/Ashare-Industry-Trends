@@ -61,7 +61,7 @@ for train_index, test_index in skf.split(X, y):
     evallist = [(dtrain, 'train'), (dvali, 'valid')]  # 'valid-auc' will be used for early stopping
     # 模型train
     model = xgb.train(params, dtrain,
-                      num_boost_round=200,
+                      num_boost_round=2000,
                       evals=evallist,
                       early_stopping_rounds=100,
                       verbose_eval=100)
