@@ -12,7 +12,11 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.preprocessing import LabelEncoder
 lb=LabelEncoder()
-train_stock = pd.read_csv('input/TRAINSET_STOCK.csv')
+train_stock_raw= pd.read_csv('input/TRAINSET_STOCK.csv')
+train_stock_06 = pd.read_csv('input/20190506_STOCK.csv')
+train_stock_14= pd.read_csv('input/20190514_STOCK.csv')
+train_stock=pd.concat([train_stock_raw,train_stock_06,train_stock_14],axis=0)
+print(train_stock_raw.shape,train_stock_06.shape,train_stock_14.shape,train_stock.shape)
 # train_stock=pd.get_dummies(train_stock,columns=['name'])
 train_stock['name']=lb.fit_transform(train_stock.name.values)
 # 设置
@@ -30,9 +34,9 @@ train_stock['tmp']=(train_stock['high']+train_stock['close']+train_stock['low'])
 
 no_features = ['ts_code', 'trade_date','name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
-period = 10
+period = 50
 featurenum = len(features) * period
-future_date = [20190402, 20190403, 20190404, 20190408, 20190409]
+future_date = [20190515, 20190516, 20190517, 20190520, 20190521]
 all_train,all_test=pd.DataFrame(),pd.DataFrame()
 for index,group in tqdm(train_stock.groupby(by='ts_code')):
     # 生成训练集

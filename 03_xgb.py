@@ -44,7 +44,7 @@ for train_index, test_index in skf.split(X, y):
     # 参数设置
     params = {'booster': 'gbtree',
               'objective': 'binary:logistic',
-              'eta': 0.02,
+              'eta': 0.05,
               # 'max_depth':4,
               'min_child_weight': 6,
               'colsample_bytree': 0.7,
@@ -61,9 +61,9 @@ for train_index, test_index in skf.split(X, y):
     evallist = [(dtrain, 'train'), (dvali, 'valid')]  # 'valid-auc' will be used for early stopping
     # 模型train
     model = xgb.train(params, dtrain,
-                      num_boost_round=2000,
+                      num_boost_round=1000,
                       evals=evallist,
-                      early_stopping_rounds=100,
+                      early_stopping_rounds=50,
                       verbose_eval=100)
     # 预测验证
     pred = model.predict(dvali, ntree_limit=model.best_ntree_limit)
