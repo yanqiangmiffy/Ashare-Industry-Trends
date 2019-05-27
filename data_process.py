@@ -11,34 +11,37 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from sklearn.preprocessing import LabelEncoder
-lb=LabelEncoder()
-train_stock_raw= pd.read_csv('input/TRAINSET_STOCK.csv')
+
+lb = LabelEncoder()
+train_stock_raw = pd.read_csv('input/TRAINSET_STOCK.csv')
 train_stock_06 = pd.read_csv('input/20190506_STOCK.csv')
-train_stock_14= pd.read_csv('input/20190514_STOCK.csv')
-train_stock=pd.concat([train_stock_raw,train_stock_06,train_stock_14],axis=0)
-print(train_stock_raw.shape,train_stock_06.shape,train_stock_14.shape,train_stock.shape)
+train_stock_14 = pd.read_csv('input/20190514_STOCK.csv')
+train_stock_21 = pd.read_csv('input/20190521_STOCK.csv')
+train_stock = pd.concat([train_stock_raw, train_stock_06, train_stock_14, train_stock_21], axis=0)
+print(train_stock_raw.shape, train_stock_06.shape, train_stock_14.shape,
+      train_stock_21.shape, train_stock.shape)
 # train_stock=pd.get_dummies(train_stock,columns=['name'])
-train_stock['name']=lb.fit_transform(train_stock.name.values)
+train_stock['name'] = lb.fit_transform(train_stock.name.values)
 # 设置
-train_stock['ts_code']=train_stock['ts_code'].astype('int32')
-train_stock['trade_date']=train_stock['trade_date'].astype('int32')
-train_stock['y']=train_stock['y'].astype('int32')
+train_stock['ts_code'] = train_stock['ts_code'].astype('int32')
+train_stock['trade_date'] = train_stock['trade_date'].astype('int32')
+train_stock['y'] = train_stock['y'].astype('int32')
 
 # 特征工程
 # 1.威廉指数：（最高价-收盘价）/(最高价-最低价)*100
-train_stock['willr']=(train_stock['high']-train_stock['close'])/(train_stock['high']-train_stock['low'])*100
+train_stock['willr'] = (train_stock['high'] - train_stock['close']) / (train_stock['high'] - train_stock['low']) * 100
 # 2.tmp
-train_stock['tmp']=(train_stock['high']+train_stock['close']+train_stock['low'])/3
+train_stock['tmp'] = (train_stock['high'] + train_stock['close'] + train_stock['low']) / 3
 # RSI
 
 
-no_features = ['ts_code', 'trade_date','name']
+no_features = ['ts_code', 'trade_date', 'name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
 period = 50
 featurenum = len(features) * period
-future_date = [20190515, 20190516, 20190517, 20190520, 20190521]
-all_train,all_test=pd.DataFrame(),pd.DataFrame()
-for index,group in tqdm(train_stock.groupby(by='ts_code')):
+future_date = [20190522, 20190523, 20190524, 20190527, 20190528]
+all_train, all_test = pd.DataFrame(), pd.DataFrame()
+for index, group in tqdm(train_stock.groupby(by='ts_code')):
     # 生成训练集
     for _ in future_date:
         group = group.append(pd.Series(), ignore_index=True)
@@ -52,14 +55,14 @@ for index,group in tqdm(train_stock.groupby(by='ts_code')):
 
     df = pd.concat(cols, axis=1)
     df.columns = names
-    df = pd.concat([group[['ts_code', 'trade_date', 'y','name']], df], axis=1)
-    change_cols=[col for col in df.columns if col.startswith('change')]
-    df[change_cols]=df[change_cols].fillna(value=0)
-    df['avg_change']=df[change_cols].mean(axis=1) # 每行平均值
-    df['sum_change']=df[change_cols].sum(axis=1) # 每行和
-    df['max_change']=df[change_cols].max(axis=1) # 每行最大值
-    df['min_change']=df[change_cols].min(axis=1) # 每行最小值
-    df['median_change']=df[change_cols].median(axis=1) # 算术中位数
+    df = pd.concat([group[['ts_code', 'trade_date', 'y', 'name']], df], axis=1)
+    change_cols = [col for col in df.columns if col.startswith('change')]
+    df[change_cols] = df[change_cols].fillna(value=0)
+    df['avg_change'] = df[change_cols].mean(axis=1)  # 每行平均值
+    df['sum_change'] = df[change_cols].sum(axis=1)  # 每行和
+    df['max_change'] = df[change_cols].max(axis=1)  # 每行最大值
+    df['min_change'] = df[change_cols].min(axis=1)  # 每行最小值
+    df['median_change'] = df[change_cols].median(axis=1)  # 算术中位数
 
     pct_cols = [col for col in df.columns if col.startswith('pct')]
     df[pct_cols] = df[pct_cols].fillna(value=0)
@@ -78,17 +81,16 @@ for index,group in tqdm(train_stock.groupby(by='ts_code')):
 
     # print(change_cols)
     train, test = df.iloc[:df.shape[0] - 5], df.iloc[-5:]
-    train=train.dropna(subset=['pb(day-1)','pe(day-1)'],how="all")
-    all_train=all_train.append(train)
-    all_test=all_test.append(test)
+    train = train.dropna(subset=['pb(day-1)', 'pe(day-1)'], how="all")
+    all_train = all_train.append(train)
+    all_test = all_test.append(test)
 
-all_train['ts_code']=all_train['ts_code'].astype('int32')
-all_train['trade_date']=all_train['trade_date'].astype('int32')
-all_train['y']=all_train['y'].astype('int32')
+all_train['ts_code'] = all_train['ts_code'].astype('int32')
+all_train['trade_date'] = all_train['trade_date'].astype('int32')
+all_train['y'] = all_train['y'].astype('int32')
 
-
-all_test['ts_code']=all_test['ts_code'].astype('int32')
-all_test['trade_date']=all_test['trade_date'].astype('int32')
+all_test['ts_code'] = all_test['ts_code'].astype('int32')
+all_test['trade_date'] = all_test['trade_date'].astype('int32')
 
 print(all_test.shape)
 all_train.to_csv('input/train.csv', index=False)
