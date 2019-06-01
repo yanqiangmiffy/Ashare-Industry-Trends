@@ -17,6 +17,7 @@ train_stock_raw = pd.read_csv('input/TRAINSET_STOCK.csv')
 train_stock_06 = pd.read_csv('input/20190506_STOCK.csv')
 train_stock_14 = pd.read_csv('input/20190514_STOCK.csv')
 train_stock_21 = pd.read_csv('input/20190521_STOCK.csv')
+train_stock_28 = pd.read_csv('input/20190528_STOCK.csv')
 train_stock = pd.concat([train_stock_raw, train_stock_06, train_stock_14, train_stock_21], axis=0)
 print(train_stock_raw.shape, train_stock_06.shape, train_stock_14.shape,
       train_stock_21.shape, train_stock.shape)
@@ -37,9 +38,9 @@ train_stock['tmp'] = (train_stock['high'] + train_stock['close'] + train_stock['
 
 no_features = ['ts_code', 'trade_date', 'name']
 features = [fea for fea in train_stock.columns if fea not in no_features]  # 11
-period = 50
+period = 30
 featurenum = len(features) * period
-future_date = [20190522, 20190523, 20190524, 20190527, 20190528]
+future_date = [20190529, 20190530, 20190531, 20190603, 20190604]
 all_train, all_test = pd.DataFrame(), pd.DataFrame()
 for index, group in tqdm(train_stock.groupby(by='ts_code')):
     # 生成训练集

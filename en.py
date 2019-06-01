@@ -10,10 +10,10 @@
 import pandas as pd
 import numpy as np
 
-lgb = pd.read_csv('output/lgb_0.9145825686356523.csv')
-xgb = pd.read_csv('output/xgb_0.8515866227793623.csv')
+lgb = pd.read_csv('output/lgb_0.9221174752906102.csv')
+xgb = pd.read_csv('output/xgb_0.9042040369656723.csv')
 
-lgb['p'] = lgb['p'] * 0.3 + xgb['p'] * 0.7
+lgb['p'] = lgb['p'] * 0.2 + xgb['p'] * 0.7
 # lgb['p'] = np.round(lgb['p'],2)
 
 
